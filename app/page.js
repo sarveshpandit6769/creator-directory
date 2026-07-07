@@ -1,65 +1,99 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import { useCreators } from "../hooks/useCreators";
+import CreatorsTable from "../components/CreatorsTable";
+import FilterBar from "../components/FilterBar";
+import Pagination from "../components/Pagination";
+import CreatorModal from "../components/CreatorModal";
+import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 
-export default function Home() {
+export default function CreatorsPage() {
+  // All filter/sort/page state lives here
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 10,
+    sortBy: "",
+    order: "asc",
+    niche: "",
+    minFollowers: "",
+    maxFollowers: "",
+  });
+
+  const [modalCreator, setModalCreator] = useState(null);   // null=closed, {}=create, creator=edit
+  const [deleteTarget, setDeleteTarget] = useState(null);   // null=closed, creator=open
+
+  const { data, isLoading, isError, error } = useCreators(filters);
+
+  function handleSort(col, dir) {
+    setFilters((f) => ({ ...f, sortBy: col, order: dir, page: 1 }));
+  }
+
+  // --- Loading state ---
+  if (isLoading) return (
+    <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
+      Loading creators...
+    </div>
+  );
+
+  // --- Error state ---
+  if (isError) return (
+    <div style={{ padding: "40px", textAlign: "center", color: "#ef4444" }}>
+      <p>Something went wrong: {error.message}</p>
+      <button onClick={() => window.location.reload()}>Retry</button>
+    </div>
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "32px 16px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <h1 style={{ fontSize: "24px", fontWeight: 700 }}>Creators</h1>
+        <button onClick={() => setModalCreator({})}>+ Add Creator</button>
+      </div>
+
+      <FilterBar filters={filters} onChange={setFilters} />
+
+      {/* Empty state */}
+      {data.data.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "60px", color: "#6b7280" }}>
+          <p>No creators found.</p>
+          <button onClick={() => setFilters({ page: 1, limit: 10, sortBy: "", order: "asc", niche: "", minFollowers: "", maxFollowers: "" })}>
+            Clear Filters
+          </button>
+        </div>
+      ) : (
+        <>
+          <CreatorsTable
+            data={data.data}
+            sortBy={filters.sortBy}
+            order={filters.order}
+            onSort={handleSort}
+            onEdit={(creator) => setModalCreator(creator)}
+            onDelete={(creator) => setDeleteTarget(creator)}
+          />
+          <Pagination
+            page={filters.page}
+            limit={filters.limit}
+            total={data.total}
+            onChange={(p) => setFilters((f) => ({ ...f, page: p }))}
+          />
+        </>
+      )}
+
+      {/* Create/Edit Modal */}
+      {modalCreator !== null && (
+        <CreatorModal
+          creator={Object.keys(modalCreator).length > 0 ? modalCreator : null}
+          onClose={() => setModalCreator(null)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      )}
+
+      {/* Delete Confirmation */}
+      {deleteTarget && (
+        <DeleteConfirmDialog
+          creator={deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+        />
+      )}
     </div>
   );
 }
