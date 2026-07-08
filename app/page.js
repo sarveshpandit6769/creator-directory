@@ -219,13 +219,13 @@ const headerStyle = {
 const titleStyle = {
   fontSize: "26px",
   fontWeight: 700,
-  color: "#111827",
+  color: "#8604e9ff",
   margin: 0,
 };
 
 const subtitleStyle = {
   fontSize: "14px",
-  color: "#6b7280",
+  color: "#00e5ffff",
   margin: "4px 0 0 0",
 };
 

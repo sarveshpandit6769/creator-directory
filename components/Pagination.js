@@ -7,7 +7,7 @@ export default function Pagination({ page, limit, total, onChange }) {
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "16px", justifyContent: "flex-end" }}>
-      <span style={{ fontSize: "14px", color: "#6b7280" }}>
+      <span style={{ fontSize: "14px", color: "#ffffffff" }}>
         {(page - 1) * limit + 1}–{Math.min(page * limit, total)} of {total}
       </span>
 
@@ -60,7 +60,7 @@ function btnStyle(disabled) {
     fontSize: "13px",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.4 : 1,
-    background: "#fff",
+    background: "#000000ff",
   };
 }
 
