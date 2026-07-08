@@ -164,13 +164,29 @@ Used **Option A (Express server)** from the spec. Reasons:
 
 ---
 
-## What I'd Do Differently With More Time
+## Bonus Features Implemented
 
-- **Optimistic updates** — update the UI immediately on create/edit/delete and roll back on error, instead of waiting for the server round-trip
-- **URL search params** — reflect filters/sort/page in the URL so filtered views are shareable and bookmarkable (`useSearchParams` + `useRouter`)
+### Optimistic Updates
+All three mutations (create, edit, delete) update the UI **before** the server responds:
+- **Delete** — row disappears instantly, rolls back if the API call fails
+- **Edit** — row updates instantly, rolls back on error
+- **Create** — new row appears at the top instantly with a temp id, replaced by the real id after the server confirms
+
+The rollback pattern uses `onMutate` to snapshot all cached pages, `onError` to restore the snapshot, and `onSettled` to always do a final `invalidateQueries` to ensure consistency.
+
+### URL Search Params (Shareable Filtered Views)
+Every filter, sort, and page change is reflected in the URL query string:
+```
+/?niche=beauty&sortBy=followerCount&order=desc&page=2
+```
+- Filtered/sorted views are fully **bookmarkable and shareable**
+- Browser **back/forward** navigation works correctly — going back restores the previous filter state
+- Default values (page=1, limit=10, order=asc) are omitted from the URL to keep it clean
+
+---
+
 - **Real backend** — replace the in-memory Express mock with a real database (PostgreSQL + Prisma or similar)
 - **Unit tests** — test hooks with `@testing-library/react` + `msw` for mocked API responses
 - **Debounced follower range inputs** — avoid firing a new API request on every keystroke in the min/max follower fields
-- **Row hover highlight** — small UX improvement on the table
 - **Toast notifications** — show success/error toasts after mutations instead of just silently updating
-- **Skeleton loading** — replace the text "Loading creators..." with a proper skeleton table
+- **Skeleton loading** — replace the spinner with a proper skeleton table for a better perceived performance
