@@ -63,14 +63,136 @@ cd creator-directory
 
 Open **Terminal 1**:
 
-If Module Express Error showing then install from terminal and run this command 
-```bash
-npm install express
-```
-
 ```bash
 cd mock-server
 npm install
+node mock-server.js
+```
+
+Error: Cannot find module 'express'
+Require stack:
+- C:\Users\creator-directory\mock-server\mock-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1500:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (C:\Users\divya\OneDrive\Desktop\Clone\creator-directory\mock-server\mock-server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\Desktop\\Clone\\creator-directory\\mock-server\\mock-server.js'
+  ]
+}
+
+Node.js v24.17.0 tell me whats the error
+
+Error:
+Error: Cannot find module 'express'
+
+Reason:
+Node.js cannot find the Express package because it is either:
+1. Not installed.
+2. node_modules folder is missing.
+3. You are running the command from the wrong folder.
+
+---------------------------------------------------
+STEP 1: Go to your project folder
+---------------------------------------------------
+
+cd "C:\Users\Desktop\Clone\creator-directory\mock-server"
+
+---------------------------------------------------
+STEP 2: Check if package.json exists
+---------------------------------------------------
+
+dir
+
+You should see:
+
+package.json
+mock-server.js
+node_modules (optional)
+
+---------------------------------------------------
+STEP 3: Install all dependencies
+---------------------------------------------------
+
+npm install
+
+If Express is still missing, run:
+
+npm install express
+
+---------------------------------------------------
+STEP 4: Verify Express is installed
+---------------------------------------------------
+
+npm list express
+
+Expected output:
+
+mock-server
+└── express@5.x.x
+
+---------------------------------------------------
+STEP 5: Start the server
+---------------------------------------------------
+
+node mock-server.js
+
+---------------------------------------------------
+IF IT STILL DOESN'T WORK
+---------------------------------------------------
+
+Delete:
+
+node_modules
+package-lock.json
+
+Then run:
+
+npm install
+
+After installation finishes:
+
+node mock-server.js
+
+---------------------------------------------------
+CHECK YOUR CURRENT DIRECTORY
+---------------------------------------------------
+
+pwd
+
+or
+
+cd
+
+It should show:
+
+C:\Users\divya\OneDrive\Desktop\Clone\creator-directory\mock-server
+
+---------------------------------------------------
+SUMMARY
+---------------------------------------------------
+
+✓ Go to the mock-server folder.
+✓ Run: npm install
+✓ If needed, run: npm install express
+✓ Start the server: node mock-server.js
+
+```bash
+npm install express
+node mock-server.js
+```
+
+```bash
+pwd
+dir
+npm list express
 node mock-server.js
 ```
 
