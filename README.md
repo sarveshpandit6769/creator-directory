@@ -63,6 +63,9 @@ cd creator-directory
 
 Open **Terminal 1**:
 
+If Module Error showing then install from terminal and run this command
+npm install express
+
 ```bash
 cd mock-server
 npm install
